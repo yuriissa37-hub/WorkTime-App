@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="متتبع ساعات الدوام والعمل الإضافي">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <title>WorkTime – وقت العمل</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1220;--panel:#131e30;--panel2:#1a2940;--line:#2b3a52;--text:#eef4ff;--muted:#9eacc2;--accent:#62b6ff;--green:#53d6a0;--orange:#ffbd69;--red:#ff7777}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(1000px 500px at 80% -10%,#1b3657 0%,transparent 60%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+    .wrap{max-width:900px;margin:auto;padding:18px 14px 42px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+    .brand{display:flex;align-items:center;gap:11px}.logo{width:46px;height:46px;border-radius:15px;background:linear-gradient(135deg,#3b9bff,#5fe0b2);display:grid;place-items:center;color:#071321;font-weight:900;font-size:22px;box-shadow:0 8px 28px #2e9bff33}
+    h1{font-size:21px;margin:0}.sub{color:var(--muted);font-size:12px;margin-top:3px}.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+    button,.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:12px;padding:10px 13px;font:inherit;font-size:13px;cursor:pointer}
+    button.primary{background:linear-gradient(135deg,#3198f4,#3fc9a0);border:0;color:#061321;font-weight:800}
+    button.danger{color:#ffaaaa}.hero{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:10px;margin-bottom:14px}
+    .stat,.panel{background:linear-gradient(145deg,#17243a,#111b2c);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:0 10px 30px #0002}
+    .stat .label{font-size:12px;color:var(--muted)}.stat strong{display:block;font-size:25px;margin-top:8px;letter-spacing:.3px}.stat small{color:var(--muted);font-size:11px}
+    .monthbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.monthbar h2{font-size:17px;margin:0}.monthnav{display:flex;gap:7px}
+    .panel{padding:14px;margin-bottom:13px}.panelhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.panelhead h3{font-size:15px;margin:0}
+    .formgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:11px;color:var(--muted)}input,textarea,select{width:100%;background:#0d1727;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:11px;font:inherit;font-size:14px;min-width:0}textarea{resize:vertical;min-height:42px}
+    .wide{grid-column:span 2}.formbuttons{display:flex;gap:8px;align-items:end}.hint{font-size:11px;color:var(--muted);margin-top:9px;line-height:1.7}
+    .tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:620px;font-size:13px}th,td{padding:11px 9px;border-bottom:1px solid #26364d;text-align:right;white-space:nowrap}th{color:var(--muted);font-weight:600;font-size:11px}tbody tr:last-child td{border-bottom:0}.holiday{color:var(--orange)}.hours{color:var(--green);font-weight:800}.actions{display:flex;gap:5px}.actions button{padding:6px 8px;font-size:11px}
+    .empty{text-align:center;color:var(--muted);padding:24px 10px;font-size:13px}.footer{color:#7f90a9;text-align:center;font-size:11px;margin-top:18px;line-height:1.8}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar button{font-size:12px}
+    .pill{display:inline-block;border-radius:20px;padding:4px 8px;font-size:10px;background:#263a53;color:#b9d7f5}.pill.off{background:#493a28;color:#ffd39b}
+    @media(max-width:650px){.wrap{padding:14px 11px 30px}.hero{grid-template-columns:1fr 1fr}.stat:first-child{grid-column:span 2}.stat strong{font-size:22px}.formgrid{grid-template-columns:1fr 1fr}.wide{grid-column:span 2}.top{align-items:flex-start}.top-actions{max-width:125px}.top-actions button{padding:8px}.monthbar h2{font-size:15px}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">W</div><div><h1>WorkTime</h1><div class="sub">وقت العمل · سجل الدوام والعمل الإضافي</div></div></div>
+    <div class="top-actions"><button id="installBtn" hidden>تثبيت التطبيق</button><button id="backupBtn">نسخة احتياطية</button></div>
+  </header>
+
+  <section class="hero">
+    <div class="stat"><div class="label">إجمالي العمل الإضافي لهذا الشهر</div><strong id="totalHours">0:00</strong><small>ساعة : دقيقة</small></div>
+    <div class="stat"><div class="label">أيام مسجلة</div><strong id="recordedDays">0</strong><small>يوم</small></div>
+    <div class="stat"><div class="label">أيام بها إضافي</div><strong id="overtimeDays">0</strong><small>يوم</small></div>
+  </section>
+
+  <div class="monthbar">
+    <div><div class="sub">السجل الشهري</div><h2 id="monthTitle"></h2></div>
+    <div class="monthnav"><button id="prevMonth" aria-label="الشهر السابق">‹</button><button id="todayMonth">هذا الشهر</button><button id="nextMonth" aria-label="الشهر التالي">›</button></div>
+  </div>
+
+  <section class="panel">
+    <div class="panelhead"><h3 id="formTitle">إضافة سجل دوام</h3><span class="pill">الدوام الرسمي 08:00 – 16:00</span></div>
+    <form id="entryForm">
+      <div class="formgrid">
+        <div class="field"><label for="date">التاريخ</label><input id="date" type="date" required></div>
+        <div class="field"><label for="arrival">وقت الحضور</label><input id="arrival" type="time"></div>
+        <div class="field"><label for="departure">وقت الانصراف</label><input id="departure" type="time"></div>
+        <div class="field"><label for="note">ملاحظات</label><input id="note" type="text" maxlength="120" placeholder="اختياري"></div>
+        <div class="formbuttons wide"><button class="primary" type="submit" id="saveBtn">حفظ السجل</button><button type="button" id="cancelEdit" hidden>إلغاء التعديل</button></div>
+      </div>
+      <div class="hint">يُحتسب العمل الإضافي بعد الساعة 16:00 فقط. يومَا الجمعة والسبت عطلة رسمية، وتُعرض ساعات العمل فيهما منفصلة ولا تدخل في مجموع الإضافي الشهري حاليًا.</div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="panelhead"><h3>تفاصيل الشهر</h3><div class="toolbar"><button id="exportBtn">تصدير البيانات</button><button id="importBtn">استيراد نسخة</button><input id="importFile" type="file" accept="application/json" hidden></div></div>
+    <div class="tablewrap"><table><thead><tr><th>التاريخ</th><th>اليوم</th><th>الحضور</th><th>الانصراف</th><th>الإضافي</th><th>ملاحظات</th><th>إجراءات</th></tr></thead><tbody id="rows"></tbody></table><div id="empty" class="empty">لا توجد سجلات لهذا الشهر. أضف أول سجل من النموذج أعلاه.</div></div>
+  </section>
+  <div class="footer">بياناتك محفوظة محليًا على هذا الجهاز. لا يحتاج التطبيق إلى حساب أو اتصال دائم بالإنترنت.<br>احتفظ بنسخة احتياطية عند تغيير الهاتف أو المتصفح.</div>
+</div>
+<script>
+(() => {
+ const KEY='worktime_records_v1';
+ let records=load(), view=new Date(), editing=null, deferredPrompt=null;
+ const $=id=>document.getElementById(id);
+ function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch{return {}}}
+ function save(){localStorage.setItem(KEY,JSON.stringify(records))}
+ function pad(n){return String(n).padStart(2,'0')}
+ function keyDate(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+ function parseTime(t){if(!t)return null;const [h,m]=t.split(':').map(Number);return h*60+m}
+ function fmtTime(t){if(!t)return '—';let [h,m]=t.split(':').map(Number);const ap=h>=12?'م':'ص';h=h%12||12;return `${h}:${pad(m)} ${ap}`}
+ function fmtDuration(min){if(!min)return '0:00';return `${Math.floor(min/60)}:${pad(min%60)}`}
+ function dayName(date){return new Intl.DateTimeFormat('ar',{weekday:'long'}).format(new Date(date+'T12:00:00'))}
+ function isHoliday(date){const d=new Date(date+'T12:00:00').getDay();return d===5||d===6}
+ function overtime(r){const dep=parseTime(r.departure);return dep===null?0:Math.max(0,dep-16*60)}
+ function holidayHours(r){if(!isHoliday(r.date))return 0;const a=parseTime(r.arrival),d=parseTime(r.departure);return a===null||d===null?0:Math.max(0,d-a)}
+ function monthRecords(){const prefix=`${view.getFullYear()}-${pad(view.getMonth()+1)}-`;return Object.values(records).filter(r=>r.date.startsWith(prefix)).sort((a,b)=>a.date.localeCompare(b.date))}
+ function render(){
+   $('monthTitle').textContent=new Intl.DateTimeFormat('ar',{month:'long',year:'numeric'}).format(view);
+   const list=monthRecords(), total=list.filter(r=>!isHoliday(r.date)).reduce((s,r)=>s+overtime(r),0), otDays=list.filter(r=>!isHoliday(r.date)&&overtime(r)>0).length;
+   $('totalHours').textContent=fmtDuration(total);$('recordedDays').textContent=list.length;$('overtimeDays').textContent=otDays;
+   $('rows').innerHTML='';
+   $('empty').style.display=list.length?'none':'block';
+   list.forEach(r=>{
+     const holiday=isHoliday(r.date), tr=document.createElement('tr');
+     const vals=[r.date,dayName(r.date),fmtTime(r.arrival),fmtTime(r.departure),holiday?`عطلة · ${fmtDuration(holidayHours(r))}`:fmtDuration(overtime(r)),r.note||'—'];
+     vals.forEach((v,i)=>{const td=document.createElement('td');td.textContent=v;if(i===1&&holiday)td.className='holiday';if(i===4)td.className=holiday?'holiday':'hours';tr.appendChild(td)});
+     const td=document.createElement('td');td.innerHTML=`<div class="actions"><button data-edit="${r.date}">تعديل</button><button class="danger" data-del="${r.date}">حذف</button></div>`;tr.appendChild(td);$('rows').appendChild(tr);
+   });
+ }
+ function resetForm(){editing=null;$('entryForm').reset();$('date').value=keyDate(view.getFullYear()===new Date().getFullYear()&&view.getMonth()===new Date().getMonth()?new Date():new Date(view.getFullYear(),view.getMonth(),1));$('formTitle').textContent='إضافة سجل دوام';$('saveBtn').textContent='حفظ السجل';$('cancelEdit').hidden=true}
+ $('entryForm').addEventListener('submit',e=>{e.preventDefault();const date=$('date').value;if(!date)return;records[date]={date,arrival:$('arrival').value,departure:$('departure').value,note:$('note').value.trim()};save();view=new Date(date+'T12:00:00');resetForm();render()});
+ $('rows').addEventListener('click',e=>{const edit=e.target.dataset.edit,del=e.target.dataset.del;if(edit){const r=records[edit];editing=edit;$('date').value=r.date;$('arrival').value=r.arrival||'';$('departure').value=r.departure||'';$('note').value=r.note||'';$('formTitle').textContent='تعديل سجل الدوام';$('saveBtn').textContent='حفظ التعديلات';$('cancelEdit').hidden=false;window.scrollTo({top:0,behavior:'smooth'})}if(del&&confirm('هل تريد حذف سجل هذا اليوم؟')){delete records[del];save();render()}});
+ $('cancelEdit').onclick=resetForm;
+ $('prevMonth').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);resetForm();render()};
+ $('nextMonth').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);resetForm();render()};
+ $('todayMonth').onclick=()=>{view=new Date();resetForm();render()};
+ function download(name,data,type='application/json'){const blob=new Blob([data],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+ function exportData(){download('WorkTime-backup-'+keyDate(new Date())+'.json',JSON.stringify({app:'WorkTime',version:1,records},null,2))}
+ $('exportBtn').onclick=exportData;$('backupBtn').onclick=exportData;
+ $('importBtn').onclick=()=>$('importFile').click();
+ $('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());const incoming=obj.records||obj;if(!incoming||typeof incoming!=='object')throw Error();if(!confirm('سيتم دمج السجلات المستوردة مع السجلات الحالية. هل تريد المتابعة؟'))return;records={...records,...incoming};save();render();alert('تم استيراد البيانات بنجاح.')}catch{alert('تعذر قراءة ملف النسخة الاحتياطية.')}e.target.value=''};
+ if('serviceWorker' in navigator && location.protocol!=='file:'){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installBtn').hidden=false});
+ $('installBtn').onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('installBtn').hidden=true};
+ $('date').value=keyDate(new Date());render();
+})();
+</script>
+</body>
+</html>
